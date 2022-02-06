@@ -72,8 +72,8 @@ export const updateNFTItemService = function (
            price = $6, 
            is_open_for_sale = $7, 
            is_active = $8,
-           ethereum_address = $9,
-        WHERE id = $9 
+           ethereum_address = $9
+        WHERE id = $10 
         RETURNING *`;
 
   const params = [
@@ -85,8 +85,8 @@ export const updateNFTItemService = function (
     opts.price,
     opts.is_open_for_sale,
     opts.is_active,
-    opts.id,
     opts.ethereum_address,
+    opts.id,
   ];
 
   return executeQuery('Update NFT_item', query, params);
