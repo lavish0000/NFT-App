@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { RESPONSE_TYPES } from "../../util/constants";
 import { sendResponse } from "../../util/responses";
+import { ITEM_TYPES } from "../../util/types";
 import { addNFTItemService, getAllNFTItemsService, getNFTItemByIdService, updateNFTItemService } from "./services";
 
 export const createNFTItem = async (req: Request, res: Response) => {
@@ -30,6 +31,10 @@ export const updateNFTItem = async (req: Request, res: Response) => {
             return sendResponse(res, RESPONSE_TYPES.NOT_FOUND, {}, "NFT not found");
         }
 
+        if (item.rows[0].owner !== unique_browser_id && !updatedData?.owner) {
+            return sendResponse(res, RESPONSE_TYPES.UNAUTHORIZED, {}, "You are not the owner of this NFT");
+        }
+
         const updatedItem = (await updateNFTItemService({ id, ...item.rows[0], ...updatedData })).rows[0];
         
         updatedItem.is_owner = +(unique_browser_id === updatedItem.owner);
@@ -47,8 +52,10 @@ export const updateNFTItem = async (req: Request, res: Response) => {
 export const getAllNFTItems = async (req: Request, res: Response) => {
     try {
         const unique_browser_id = req.headers['unique-browser-id'] as string;
+
+        const { type } = req.params;
         
-        const allNFTItems = await getAllNFTItemsService(unique_browser_id);
+        const allNFTItems = await getAllNFTItemsService(unique_browser_id, type as ITEM_TYPES);
 
         sendResponse(res, RESPONSE_TYPES.SUCCESS, {data: allNFTItems.rows});
 

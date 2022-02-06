@@ -1,5 +1,5 @@
 import { executeQuery } from '../../DB/sqlLib';
-import { dynamicObjectInterface } from '../../util/types';
+import { dynamicObjectInterface, ITEM_TYPES } from '../../util/types';
 
 export const addNFTItemService = function (opts: dynamicObjectInterface = {}) {
   const query = `
@@ -22,7 +22,7 @@ export const addNFTItemService = function (opts: dynamicObjectInterface = {}) {
   return executeQuery('Add NFT Items', query, params);
 };
 
-export const getAllNFTItemsService = function (unique_browser_id: string) {
+export const getAllNFTItemsService = function (unique_browser_id: string, type: ITEM_TYPES) {
   const query = `
         SELECT 
         id,
@@ -41,7 +41,7 @@ export const getAllNFTItemsService = function (unique_browser_id: string) {
              AS is_owner 
         FROM nft_items 
         WHERE 
-             (is_open_for_sale = true OR owner = $1) 
+             (${type === ITEM_TYPES.ALL ? " is_open_for_sale = true OR " : ""} owner = $1) 
              AND 
              is_active = true 
              ORDER BY id DESC`;
