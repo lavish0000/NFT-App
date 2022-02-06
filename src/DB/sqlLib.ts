@@ -8,6 +8,9 @@ const db_config = {
 	idleTimeoutMillis: 30000,
 	connectionTimeoutMillis: 2000,
 	max: 20,
+	ssl: {
+        rejectUnauthorized: false,
+    }
 };
 
 function initializeConnectionPool(db_config: PoolConfig) {
