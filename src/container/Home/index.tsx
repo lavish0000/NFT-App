@@ -61,13 +61,12 @@ const Home = () => {
         ? requestWalletConnection().then((res) => {
             accountChangeHandler(res);
             afterConnectFucntion && afterConnectFucntion();
+            window?.ethereum?.on("accountsChanged", accountChangeHandler);
             return resolve(res);
           })
         : resolve(accounts);
     }).catch((err) => console.error(err));
   };
-
-  window.ethereum.on("accountsChanged", accountChangeHandler);
 
   const onCardEdit = async (id?: number, data?: Partial<IEditHandlerItem>) => {
     try {
