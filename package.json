@@ -25,7 +25,6 @@
   },
   "scripts": {
     "start": "nodemon src/server.ts",
-    "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "lint": "eslint . --ext .ts,.tsx",
