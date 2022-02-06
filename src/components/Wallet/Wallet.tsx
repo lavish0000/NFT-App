@@ -18,11 +18,16 @@ const Wallet: React.FC<IWalletProps> = ({
   walletBalance,
 }) => {
   return (
-    <div className="text-pink-600 font-bold relative">
+    <div className="text-pink-600 font-bold relative sm:m-0 mr-2">
       {(!window.ethereum as any) && (
         <div>
           MetaMask is not installed.{" "}
-          <a className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600" href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en" target="_blank" >
+          <a
+            className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
+            href="https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=en"
+            target="_blank"
+            rel="noreferrer"
+          >
             Install it
           </a>
         </div>

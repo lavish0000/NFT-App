@@ -34,14 +34,17 @@ const Home = () => {
   const [walletBalance, setWalletBalance] = useState<{ [key: string]: string }>(
     {}
   );
+  const [selectedItemTypes, setSelectedItemTypes] = useState<ITEM_TYPES>(
+    ITEM_TYPES.ALL
+  );
 
   useEffect(() => {
     setLoader({ loading: LOADERS.GET_ITEMS });
-    getAllItems(ITEM_TYPES.ALL)
+    getAllItems(selectedItemTypes)
       .then((res) => setItems(res.data))
       .catch((err) => console.error(err))
       .finally(() => setLoader({ loading: null }));
-  }, []);
+  }, [selectedItemTypes]);
 
   const accountChangeHandler = (accounts: any[]) => {
     setAccounts(accounts);
@@ -97,7 +100,8 @@ const Home = () => {
   };
 
   const onCardCreate = async (_?: number, data?: IEditHandlerItem) => {
-    if (loader.loading === LOADERS.ADD_ITEM) return;
+    try {
+      if (loader.loading === LOADERS.ADD_ITEM) return;
     if (!data) return setCreateItemPopup(false);
 
     const { imageFile, ...restData } = data;
@@ -117,6 +121,11 @@ const Home = () => {
     setItems([res.data, ...items]);
     setLoader({ loading: null });
     setCreateItemPopup(false);
+    } catch (error) {
+      setLoader({ loading: null });
+      console.error("Create Card Error", error);
+      toast.error(`Create Card Error --> ${error}`);
+    }
   };
 
   const onCardDelete = async (id: number) => {
@@ -196,14 +205,27 @@ const Home = () => {
         NFT
       </h1>
       <div className="flex justify-between items-center">
-        <button
-          style={{ maxWidth: "fit-content" }}
-          className="ml-4 w-full max-w-fit px-4 py-1 text-sm text-purple-600 font-semibold rounded-full border border-purple-200 hover:text-white hover:bg-purple-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2"
-          type="button"
-          onClick={() => setCreateItemPopup(true)}
-        >
-          Create
-        </button>
+        <div className="flex justify-between items-center">
+          <button
+            style={{ maxWidth: "fit-content" }}
+            className="ml-2 sm:m-0 w-full max-w-fit px-4 py-1 text-sm text-purple-600 font-semibold rounded-full border border-purple-200 hover:text-white hover:bg-purple-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2"
+            type="button"
+            onClick={() => setCreateItemPopup(true)}
+          >
+            Create
+          </button>
+          <button
+            className="ml-4 w-full max-w-fit px-4 py-1 text-sm text-purple-600 font-semibold rounded-full border border-purple-200 hover:text-white hover:bg-purple-600 hover:border-transparent focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2"
+            type="button"
+            onClick={() =>
+              setSelectedItemTypes((prevState) =>
+                prevState === ITEM_TYPES.ALL ? ITEM_TYPES.OWNED : ITEM_TYPES.ALL
+              )
+            }
+          >
+            {selectedItemTypes === ITEM_TYPES.ALL ? "All" : "My"} NFTs
+          </button>
+        </div>
         <Wallet
           accounts={accounts}
           connectWallet={connectWallet}
@@ -215,7 +237,7 @@ const Home = () => {
           <i className="fas fa-circle-notch fa-spin"></i>
         </div>
       ) : (
-        <div className="p-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-5 gap-x-4 grid-flow-row auto-rows-max">
+        <div className="py-10 sm:px-10 md:px-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-y-5 gap-x-11 grid-flow-row auto-rows-max">
           {items.map((item) => (
             <Card
               key={`item-${item.id}`}

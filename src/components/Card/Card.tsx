@@ -11,17 +11,17 @@ interface ICardProps {
   editable?: boolean;
   editHandler: (itemId?: number, item?: IEditHandlerItem) => void;
   deleteHandler?: (itemId: number) => void;
-  changeSellStatusHandler?: (itemId: number, sellStatus: boolean, ethereumAddress?: string) => void;
+  changeSellStatusHandler?: (
+    itemId: number,
+    sellStatus: boolean,
+    ethereumAddress?: string
+  ) => void;
   buyItemHandler?: (itemId: number, item?: IItemContent) => void;
   isLoading?: boolean;
 }
 
 const btn_primary =
   "hover:bg-purple-600 hover:text-white border-purple-200 text-purple-600 focus:ring-2 focus:ring-purple-600 focus:ring-offset-2";
-const btn_success =
-  "hover:bg-green-600 hover:text-white border-green-200 text-green-600 focus:ring-2 focus:ring-green-600 focus:ring-offset-2";
-const btn_danger =
-  "hover:bg-red-600 hover:text-white border-red-200 text-red-600 focus:ring-2 focus:ring-red-600 focus:ring-offset-2";
 
 const Card: React.FC<ICardProps> = ({
   item,
@@ -86,8 +86,12 @@ const Card: React.FC<ICardProps> = ({
   };
 
   const buyAndSellButtonHandler = () => {
-      if (is_owner && id) return changeSellStatusHandler && changeSellStatusHandler(id, !is_open_for_sale, ethereum_address);
-      if (id) return buyItemHandler && buyItemHandler(id, item);
+    if (is_owner && id)
+      return (
+        changeSellStatusHandler &&
+        changeSellStatusHandler(id, !is_open_for_sale, ethereum_address)
+      );
+    if (id) return buyItemHandler && buyItemHandler(id, item);
   };
 
   return (
@@ -96,7 +100,7 @@ const Card: React.FC<ICardProps> = ({
         <div className="backdrop" onClick={() => editHandler(id)}></div>
       )}
       <div
-        className={`card rounded overflow-hidden hover:shadow-lg bg-white ${
+        className={`card rounded overflow-hidden hover:shadow-lg bg-white place-self-center ${
           editable ? "editable-card" : ""
         }`}
       >
@@ -137,24 +141,26 @@ const Card: React.FC<ICardProps> = ({
           )}
 
           <div className="px-6 py-4">
-            <div className="flex justify-between items-center mb-2">
-              {!editable && (
-                <>
-                  <i
-                    className={`fas fa-trash cursor-pointer hover:text-gray-500 ${
-                      isLoading ? "text-gray-400" : ""
-                    }`}
-                    onClick={() => deleteHandler && id && deleteHandler(id)}
-                  ></i>
-                  <i
-                    className={`fas fa-pencil-alt cursor-pointer hover:text-gray-500 ${
-                      isLoading ? "text-gray-400" : ""
-                    }`}
-                    onClick={() => editHandler(id)}
-                  ></i>
-                </>
-              )}
-            </div>
+            {!!is_owner && (
+              <div className="flex justify-between items-center mb-2">
+                {!editable && (
+                  <>
+                    <i
+                      className={`fas fa-trash cursor-pointer hover:text-gray-500 ${
+                        isLoading ? "text-gray-400" : ""
+                      }`}
+                      onClick={() => deleteHandler && id && deleteHandler(id)}
+                    ></i>
+                    <i
+                      className={`fas fa-pencil-alt cursor-pointer hover:text-gray-500 ${
+                        isLoading ? "text-gray-400" : ""
+                      }`}
+                      onClick={() => editHandler(id)}
+                    ></i>
+                  </>
+                )}
+              </div>
+            )}
 
             {editable ? (
               <>
@@ -172,7 +178,17 @@ const Card: React.FC<ICardProps> = ({
               </>
             ) : (
               <div className="flex justify-between">
-                <div className="title font-bold text-xl mb-2">{title}</div>
+                <div className="title font-bold text-xl mb-2 flex items-center justify-center gap-3">
+                  {title}
+                  {!!is_owner && (
+                    <span
+                      className={
+                        "rounded-full w-3 h-3 " +
+                        (is_open_for_sale ? "bg-green-500" : "bg-red-500")
+                      }
+                    ></span>
+                  )}
+                </div>
                 {!!is_owner && (
                   <div className="text-gray-500 text-sm">Owned</div>
                 )}
@@ -206,17 +222,17 @@ const Card: React.FC<ICardProps> = ({
                     style={{ maxWidth: "fit-content" }}
                     className={
                       "ml-4 w-full max-w-fit px-4 py-1 text-sm  font-semibold rounded-full border    hover:border-transparent focus:outline-none " +
-                      (!is_owner
-                        ? btn_primary
-                        : is_open_for_sale
-                        ? btn_success
-                        : btn_danger)
+                      btn_primary
                     }
                     type="button"
                     disabled={isLoading}
                     onClick={buyAndSellButtonHandler}
                   >
-                    {is_owner ? (is_open_for_sale ? "Open For Sale" : "Close For Sale") : "Buy"}
+                    {is_owner
+                      ? is_open_for_sale
+                        ? "Deactivate"
+                        : "Activate"
+                      : "Buy"}
                   </button>
                 )}
               </div>
