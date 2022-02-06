@@ -1,3 +1,10 @@
+.card {
+  transition: all 0.5s cubic-bezier(0, 0.81, 0, 0.83);
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
 .card img {
   max-width: 350px;
   height: 350px;
@@ -14,6 +21,7 @@
   height: auto;
   width: 45vw;
   overflow-y: auto;
+  transition: all 0.5s cubic-bezier(0, 0.81, 0, 0.83);
 }
 
 .backdrop {
@@ -62,6 +70,5 @@
     top: auto;
     transform: translate(0, 0);
     left: 0;
-    transition: all 0.3s ease-in-out;
   }
 }
